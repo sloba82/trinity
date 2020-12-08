@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 
+
 class News extends Model
 {
     use HasFactory;
@@ -15,5 +16,13 @@ class News extends Model
     public function author()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Get all of the News's comments.
+     */
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable')->with('replies');
     }
 }
