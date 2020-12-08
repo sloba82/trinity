@@ -29,5 +29,8 @@ class DatabaseSeeder extends Seeder
             ->has(Post::factory()->count(10), 'posts')
             ->has(News::factory()->count(10), 'news')
             ->create();
+
+        $this->call(CommentSeeder::class);
+        $this->call(ReplySeeder::class);
     }
 }
