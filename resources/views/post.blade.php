@@ -1,4 +1,34 @@
 <x-guest-layout>
+    @if (session()->has('success'))
+    <div id="notification" class="fixed inset-0 flex items-end justify-center px-4 py-6 pointer-events-none sm:p-6 sm:items-start sm:justify-end z-50">
+        <div class="max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
+            <div class="p-4">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <!-- Heroicon name: check-circle -->
+                        <svg class="h-6 w-6 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div class="ml-3 w-0 flex-1 pt-0.5">
+                        <p class="text-sm font-medium text-gray-900">
+                            {{ session('success') }}
+                        </p>
+                    </div>
+                    <div class="ml-4 flex-shrink-0 flex">
+                        <button x-data @click="document.getElementById('notification').remove()" class="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <span class="sr-only">Close</span>
+                            <!-- Heroicon name: x -->
+                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
     <div class="relative py-16 bg-white overflow-hidden">
         <div class="hidden lg:block lg:absolute lg:inset-y-0 lg:h-full lg:w-full">
             <div class="relative h-full text-lg max-w-prose mx-auto" aria-hidden="true">
@@ -43,30 +73,64 @@
 
 <!-- comment form -->
 <div class="flex mx-auto justify-center shadow-lg mt-6 prose prose-indigo prose-lg">
-    <form class="w-full max-w-xl bg-white rounded-lg px-4 pt-2">
+    <form action="{{ route('post.comment.create') }}" method="POST" class="w-full max-w-xl bg-white rounded-lg px-4 pt-2">
+        @csrf
+    <input type="hidden" name="post_id" value="{{$post->id}}">
        <div class="flex flex-wrap -mx-3 mb-6">
           <h3 class="px-4 pt-3 pb-2 text-gray-800 text-lg">Add a new comment</h3>
           <div class="w-full md:w-full px-3 mb-2 mt-2">
-            <input id="name" type="text" name="nale" placeholder="Enter your Name" class="bg-gray-100 rounded border border-gray-400 leading-normal resize-none w-full h-10 py-2 px-3 font-medium placeholder-gray-700 focus:outline-none focus:bg-white" required />
+            <input id="name" type="text" name="name" placeholder="Enter your Name" class="bg-gray-100 rounded border border-gray-400 leading-normal resize-none w-full h-10 py-2 px-3 font-medium placeholder-gray-700 focus:outline-none focus:bg-white" required />
          </div>
           <div class="w-full md:w-full px-3 mb-2 mt-2">
             <input id="email" type="email" name="email" placeholder="Enter your email"  class="bg-gray-100 rounded border border-gray-400 leading-normal resize-none w-full h-10 py-2 px-3 font-medium placeholder-gray-700 focus:outline-none focus:bg-white" required />
          </div>
           <div class="w-full md:w-full px-3 mb-2 mt-2">
-             <textarea class="bg-gray-100 rounded border border-gray-400 leading-normal resize-none w-full h-20 py-2 px-3 font-medium placeholder-gray-700 focus:outline-none focus:bg-white" name="body" placeholder='Type Your Comment' required></textarea>
+             <textarea name="comment" class="bg-gray-100 rounded border border-gray-400 leading-normal resize-none w-full h-20 py-2 px-3 font-medium placeholder-gray-700 focus:outline-none focus:bg-white"  placeholder='Type Your Comment' required></textarea>
           </div>
           <div class="w-full md:w-full flex items-start md:w-full px-3">
-             <div class="flex items-start w-1/2 text-gray-700 px-2 mr-auto">
-                <svg fill="none" class="w-5 h-5 text-gray-600 mr-1" viewBox="0 0 24 24" stroke="currentColor">
-                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-             </div>
              <div class="-mr-1">
                 <input type='submit' class="bg-white text-gray-700 font-medium py-1 px-4 border border-gray-400 rounded-lg tracking-wide mr-1 hover:bg-gray-100" value='Post Comment'>
              </div>
           </div>
        </form>
- </div>
+    </div>
+</div>
+
+    @if(count($post->comments))
+    <div class="container mt-10 mx-auto px-2">
+
+    @foreach ($post->comments as $comment)
+
+        <div id="comment_{{$comment->id}}" class="bg-white rounded-lg p-3 flex flex-col md:items-start shadow-lg mb-4">
+            <div class="flex flex-row  mr-2">
+                <h3 class="text-purple-600 font-semibold text-lg md:text-left ">{{$comment->name}}</h3>
+            </div>
+            <p style="width: 90%" class="text-gray-600 text-lg  md:text-left mb-5">
+                <span class="text-purple-600 font-semibold">comment: </span>
+                {{$comment->comment}}
+            </p>
+            <div class="w-full md:w-full px-3 mb-2 mt-2">
+                <input id="name" type="text" name="nale" placeholder="Replay to comment" class="bg-gray-100 rounded border border-gray-400 leading-normal resize-none w-full h-10 py-2 px-3 font-medium placeholder-gray-700 focus:outline-none focus:bg-white" required />
+             </div>
+             <div class="mb-2 mt-2 ml-2 ">
+                <input type='submit' class="bg-white text-gray-700 font-medium py-1 px-4 border border-gray-400 rounded-lg tracking-wide mr-1 hover:bg-gray-100" value='Post Comment'>
+             </div>
+
+             @foreach ($comment->replies as $reply)
+                <p style="width: 90%" class="text-gray-600 text-lg  md:text-left mb-5">
+                    <span class="text-purple-600 font-semibold">reply: </span>
+                    {{$reply->reply}}
+                </p>
+             @endforeach
+
+        </div>
+
+
+
+    @endforeach
+
+    </div>
+    @endif
 
 
 
