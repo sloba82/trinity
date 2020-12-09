@@ -10,7 +10,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if(!count($posts))
+            @if(!count($comments))
                 <p class="text-center font-bold text-3xl">No posts found!</p>
             @else
                 <div class="bg-white mb-8 overflow-hidden shadow-sm sm:rounded-lg">
@@ -30,19 +30,27 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach($posts as $post)
+                                            @foreach($comments as $comment)
                                             <tr class="{{ $loop->iteration % 2 ? 'bg-white' : 'bg-gray-50' }}">
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {{ $post->title }}
+                                                    {{ $comment->comment }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                    <a href="{{ route('post.show', $post->id) }}" target="_blank" class="text-indigo-600 hover:text-indigo-900">View</a>
-                                                    <a href="{{ route('post.edit', $post->id) }}" class="ml-4 text-indigo-600 hover:text-indigo-900">Edit</a>
-                                                    <form class="inline-block" action="{{ route('post.destroy', $post->id) }}" method="POST">
-                                                        @method('DELETE')
+                                                    <a href="{{ route('comments.show', $comment->id) }}" target="_blank" class="text-indigo-600 hover:text-indigo-900">View</a>
+                                                    <a href="{{ route('comments.edit', $comment->id) }}" class="ml-4 text-indigo-600 hover:text-indigo-900">Edit</a>
+
+                                                    @if($comment->status == 0)
+                                                    <form class="inline-block" action="{{ route('comment.enable', $comment->id) }}" method="POST">
                                                         @csrf
-                                                        <button type="submit" class="ml-4 text-indigo-600 hover:text-indigo-900">Delete</button>
+                                                        <button type="submit" class="ml-4 text-green-600 hover:text-green-900">Enable</button>
                                                     </form>
+                                                    @else
+                                                    <form class="inline-block" action="{{ route('comment.disable', $comment->id) }}" method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="ml-4 text-red-600 hover:text-red-900">Disable</button>
+                                                    </form>
+                                                    @endif
+
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -53,7 +61,7 @@
                         </div>
                     </div>
                 </div>
-                {{ $posts->links() }}
+                {{ $comments->links() }}
             @endif
         </div>
     </div>

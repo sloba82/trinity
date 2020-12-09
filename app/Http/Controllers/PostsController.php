@@ -35,8 +35,9 @@ class PostsController extends Controller
     public function edit($id)
     {
         $post = Post::findOrFail($id);
+        $comments = $post->commentsAll()->paginate(5);
 
-        return view('posts.create', compact('post'));
+        return view('posts.create', compact('post', 'comments' ));
     }
 
     public function destroy($id)
