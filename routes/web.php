@@ -4,6 +4,7 @@ use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\PostsController;
+use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,7 +31,7 @@ Route::middleware(['auth'])->prefix('dashboard')->group(function () {
 
     Route::prefix('comments')->group(function () {
         Route::get('', [CommentController::class, 'index'])->name('comments.index');
-        Route::get('/show/{id}', [CommentController::class, 'index'])->name('comments.show');
+        Route::get('/show/{id}', [CommentController::class, 'show'])->name('comments.show');
         Route::get('/edit/{id}', [CommentController::class, 'edit'])->name('comments.edit');
         Route::get('create', [CommentController::class, 'create'])->name('comments.create');
 
@@ -39,6 +40,10 @@ Route::middleware(['auth'])->prefix('dashboard')->group(function () {
         Route::post('/enable/{id}', [CommentController::class, 'enable'])->name('comment.enable');
         Route::post('/disable/{id}', [CommentController::class, 'disable'])->name('comment.disable');
     });
+
+    Route::prefix('reply')->group(function () {
+        Route::delete('destroy/{id?}', [ReplyController::class, 'destroy'])->name('reply.destroy');
+     });
 
 
 });
@@ -52,6 +57,8 @@ Route::get('/news', [FrontendController::class, 'news'])->name('news');
 Route::get('/news/{id}', [FrontendController::class, 'newsShow'])->name('news.show');
 
 Route::post('/post/comment/', [CommentController::class, 'storePost'])->name('post.comment.create');
+Route::post('/news/comment/', [CommentController::class, 'storeNews'])->name('news.comment.create');
+Route::post('reply/comment/{id}', [ReplyController::class, 'store'])->name('reply.create');
 
 
 Route::get('/test', [TestController::class , 'index']);
