@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
+use App\Models\News;
 use App\Models\Post;
 use Illuminate\Http\Request;
 
@@ -27,9 +28,25 @@ class CommentController extends Controller
             'comment' => $input['comment'],
             'name' => $input['name'],
             'email' => $input['email'],
+            'type' => 'post',
         ]);
 
         return redirect()->route('post.show', ['id' => $input['post_id']])->with('success', 'New Comment is Created!');
+    }
+
+    public function storeNews(Request $request)
+    {
+        $input = $request->all();
+
+        $post = News::findOrFail($input['news_id']);
+        $post->comments()->create([
+            'comment' => $input['comment'],
+            'name' => $input['name'],
+            'email' => $input['email'],
+            'type' => 'news',
+        ]);
+
+        return redirect()->route('news.show', ['id' => $input['news_id']])->with('success', 'New Comment is Created!');
     }
 
     public function edit($id)
@@ -40,20 +57,8 @@ class CommentController extends Controller
 
     public function show($id)
     {
-
-    }
-
-    public function store(Request $request, $id = null)
-    {
-        auth()->user()->news()->updateOrCreate(
-            ['id' => $id],
-            [
-                'title' => $request->title,
-                'content' => $request->content,
-            ]
-        );
-
-        return redirect()->route('news.index')->with('success', 'New Article Created!');
+        $comment = Comment::findOrFail($id);
+        return redirect()->route($comment->type . '.show', $comment->commentable_id . '#comment_' . $comment->id);
     }
 
     public function update(Request $request, $id = null)
@@ -69,23 +74,21 @@ class CommentController extends Controller
 
     public function enable($id = null)
     {
-       if( $this->status($id, 1 )){
+        if ($this->status($id, 1)) {
             return redirect()->route('comments.index')->with('success', 'Comment is enabled!');
-       }
+        }
 
-       return redirect()->route('comments.index')->with('error', 'Something went wrong!');
-
+        return redirect()->route('comments.index')->with('error', 'Something went wrong!');
     }
 
     public function disable($id = null)
     {
 
-       if ( $this->status($id, 0 )) {
+        if ($this->status($id, 0)) {
             return redirect()->route('comments.index')->with('success', 'Comment is disable!');
-       }
+        }
 
-       return redirect()->route('comments.index')->with('error', 'Something went wrong!');
-
+        return redirect()->route('comments.index')->with('error', 'Something went wrong!');
     }
 
     private function status($id, $status)

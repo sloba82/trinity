@@ -34,9 +34,24 @@
                                             <tr class="{{ $loop->iteration % 2 ? 'bg-white' : 'bg-gray-50' }}">
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     {{ $comment->comment }}
+
+                                                    @foreach($comment->replies as $reply)
+                                                        <div>
+                                                            {{$reply['reply']}}
+
+                                                            <form class="inline-block" action="{{ route('reply.destroy', $reply['id']) }}" method="POST">
+                                                                @method('DELETE')
+                                                                @csrf
+                                                                <button type="submit" class="ml-4 text-red-600 hover:text-red-900">Delete</button>
+                                                            </form>
+
+                                                        </div>
+                                                    @endforeach
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                    @if($comment->status == 1)
                                                     <a href="{{ route('comments.show', $comment->id) }}" target="_blank" class="text-indigo-600 hover:text-indigo-900">View</a>
+                                                    @endif
                                                     <a href="{{ route('comments.edit', $comment->id) }}" class="ml-4 text-indigo-600 hover:text-indigo-900">Edit</a>
 
                                                     @if($comment->status == 0)
