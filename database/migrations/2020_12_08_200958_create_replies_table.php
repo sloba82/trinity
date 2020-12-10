@@ -17,6 +17,7 @@ class CreateRepliesTable extends Migration
             $table->increments('id');
             $table->integer('comment_id');
             $table->text('reply');
+            $table->integer('status')->nullable()->default(0);
             $table->timestamps();
         });
         Schema::table('replies', function (Blueprint $table) {

@@ -35,15 +35,25 @@
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     {{ $comment->comment }}
 
-                                                    @foreach($comment->replies as $reply)
+                                                    @foreach($comment->repliesAll as $reply)
                                                         <div>
                                                             {{$reply['reply']}}
 
-                                                            <form class="inline-block" action="{{ route('reply.destroy', $reply['id']) }}" method="POST">
-                                                                @method('DELETE')
-                                                                @csrf
-                                                                <button type="submit" class="ml-4 text-red-600 hover:text-red-900">Delete</button>
-                                                            </form>
+                                                            @if($reply['status'] == 1)
+                                                                <form class="inline-block" action="{{ route('reply.destroy', $reply['id']) }}" method="POST">
+                                                                    @method('DELETE')
+                                                                    @csrf
+                                                                    <button type="submit" class="ml-4 text-red-600 hover:text-red-900">Delete</button>
+                                                                </form>
+                                                            @else
+                                                                <form class="inline-block" action="{{ route('reply.enable', $reply['id']) }}" method="POST">
+
+                                                                    @csrf
+                                                                    <button type="submit" class="ml-4 text-green-600 hover:text-green-900">Enable</button>
+                                                                </form>
+                                                            @endif
+
+
 
                                                         </div>
                                                     @endforeach

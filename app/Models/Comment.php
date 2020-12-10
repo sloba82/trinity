@@ -24,9 +24,14 @@ class Comment extends Model
         return $this->morphTo();
     }
 
-    public function replies()
+    public function repliesAll()
     {
         return $this->hasMany(Reply::class);
+    }
+
+    public function replies()
+    {
+        return $this->hasMany(Reply::class)->where('status' , 1);
     }
 
 
