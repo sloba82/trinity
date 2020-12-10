@@ -25,4 +25,11 @@ class ReplyController extends Controller
         Reply::destroy($id);
         return redirect()->back()->with('success', 'Reply is deleted!');
     }
+
+    public function enable($id)
+    {
+        $reply = Reply::findOrFail($id);
+        $reply->update(['status' => 1]);
+        return redirect()->back()->with('success', 'Reply is enabled!');
+    }
 }

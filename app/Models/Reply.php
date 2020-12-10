@@ -11,7 +11,8 @@ class Reply extends Model
 
     protected $fillable = [
         'comment_id',
-        'reply'
+        'reply',
+        'status'
     ];
 
 }

@@ -43,6 +43,7 @@ Route::middleware(['auth'])->prefix('dashboard')->group(function () {
 
     Route::prefix('reply')->group(function () {
         Route::delete('destroy/{id?}', [ReplyController::class, 'destroy'])->name('reply.destroy');
+        Route::post('/enable/{id}', [ReplyController::class, 'enable'])->name('reply.enable');
      });
 
 
