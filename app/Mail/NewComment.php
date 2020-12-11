@@ -11,14 +11,16 @@ class NewComment extends Mailable
 {
     use Queueable, SerializesModels;
 
+    private $data;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($data)
     {
-        //
+        $this->data = $data;
     }
 
     /**
@@ -28,6 +30,10 @@ class NewComment extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.newComment');
+
+        return $this->markdown('emails.newComment')->with([
+            'name' => $this->data['name'],
+            'comment' => $this->data['comment']
+        ]);
     }
 }

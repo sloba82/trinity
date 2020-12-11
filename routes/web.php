@@ -59,7 +59,6 @@ Route::get('/news/{id}', [FrontendController::class, 'newsShow'])->name('news.sh
 
 Route::post('/post/comment/', [CommentController::class, 'storePost'])->name('post.comment.create');
 Route::post('/news/comment/', [CommentController::class, 'storeNews'])->name('news.comment.create');
-Route::post('reply/comment/{id}', [ReplyController::class, 'store'])->name('reply.create');
+Route::post('/reply/comment/{id}', [ReplyController::class, 'store'])->name('reply.create');
 
 
-Route::get('/test', [TestController::class , 'index']);

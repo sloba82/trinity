@@ -15,4 +15,9 @@ class Reply extends Model
         'status'
     ];
 
+    public function comment()
+    {
+        return $this->belongsTo(Comment::class);
+    }
+
 }
