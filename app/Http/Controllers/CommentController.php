@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateCommentRequest;
 use App\Models\Comment;
 use App\Models\News;
 use App\Models\Post;
+use App\Services\Mail\SendMail;
 use Illuminate\Http\Request;
-
-
 
 class CommentController extends Controller
 {
@@ -19,9 +19,9 @@ class CommentController extends Controller
         return view('comments.index', compact('comments'));
     }
 
-    public function storePost(Request $request)
+    public function storePost(CreateCommentRequest $request)
     {
-        $input = $request->all();
+        $input = $request->validated();
 
         $post = Post::findOrFail($input['post_id']);
         $post->comments()->create([
@@ -31,20 +31,30 @@ class CommentController extends Controller
             'type' => 'post',
         ]);
 
+        SendMail::send($post->author->email , 'NewComment',  [
+            'name' => $post->author->name,
+            'comment' => $input['comment'],
+        ] );
+
         return redirect()->route('post.show', ['id' => $input['post_id']])->with('success', 'New Comment is Created!');
     }
 
-    public function storeNews(Request $request)
+    public function storeNews(CreateCommentRequest $request)
     {
-        $input = $request->all();
+        $input = $request->validated();
 
-        $post = News::findOrFail($input['news_id']);
-        $post->comments()->create([
+        $news = News::findOrFail($input['news_id']);
+        $news->comments()->create([
             'comment' => $input['comment'],
             'name' => $input['name'],
             'email' => $input['email'],
             'type' => 'news',
         ]);
+
+        SendMail::send($news->author->email , 'NewComment',  [
+            'name' => $news->author->name,
+            'comment' => $input['comment'],
+        ] );
 
         return redirect()->route('news.show', ['id' => $input['news_id']])->with('success', 'New Comment is Created!');
     }
@@ -94,6 +104,11 @@ class CommentController extends Controller
     private function status($id, $status)
     {
         $comment = Comment::findOrFail($id);
+
+        SendMail::send($comment->email , 'ApprovedComment',  [
+            'comment' => 'Your comment is approved',
+        ] );
+
         return $comment->update([
             'status' => $status
         ]);
