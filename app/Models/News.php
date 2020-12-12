@@ -23,6 +23,16 @@ class News extends Model
      */
     public function comments()
     {
-        return $this->morphMany(Comment::class, 'commentable')->with('replies');
+        return $this->commentsStatus()->with('replies');
+    }
+
+    public function commentsStatus()
+    {
+        return $this->morphMany(Comment::class, 'commentable')->where('status' , 1);
+    }
+
+    public function commentsAll()
+    {
+        return $this->morphMany(Comment::class, 'commentable');
     }
 }
