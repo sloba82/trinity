@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateReplyRequest;
 use App\Models\Reply;
 use App\Services\Mail\SendMail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ReplyController extends Controller
 {
@@ -43,13 +45,20 @@ class ReplyController extends Controller
      */
     public function enable($id)
     {
-        $reply = Reply::findOrFail($id);
+        DB::beginTransaction();
+        try {
+            $reply = Reply::findOrFail($id);
+            $reply->update(['status' => 1]);
 
-        SendMail::send($reply->comment->email, 'ApprovedReply',  [
-            'comment' => $reply->reply,
-        ]);
-
-        $reply->update(['status' => 1]);
-        return redirect()->back()->with('success', 'Reply is enabled!');
+            SendMail::send($reply->comment->email, 'ApprovedReply',  [
+                'comment' => $reply->reply,
+            ]);
+            DB::commit();
+            return redirect()->back()->with('success', 'Reply is enabled!');
+        } catch (\Exception $exception) {
+            Log::error('Error while updating replay status ' . $exception);
+            DB::rollBack();
+            return false;
+        }
     }
 }

@@ -8,6 +8,8 @@ use App\Models\News;
 use App\Models\Post;
 use App\Services\Mail\SendMail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CommentController extends Controller
 {
@@ -33,9 +35,11 @@ class CommentController extends Controller
         $input['type'] = 'post';
 
         $this->commentObject = Post::findOrFail($input['post_id']);
-        $this->createComment($input);
+        if ($this->createComment($input)) {
+            return redirect()->route('post.show', ['id' => $input['post_id']])->with('success', 'New Comment is Created!');
+        }
 
-        return redirect()->route('post.show', ['id' => $input['post_id']])->with('success', 'New Comment is Created!');
+        return redirect()->route('post.show', ['id' => $input['post_id']])->with('error', 'Something went wrong!');
     }
 
     /**
@@ -49,9 +53,11 @@ class CommentController extends Controller
         $input['type'] = 'news';
 
         $this->commentObject = News::findOrFail($input['news_id']);
-        $this->createComment($input);
+        if ($this->createComment($input)) {
+            return redirect()->route('news.show', ['id' => $input['news_id']])->with('success', 'New Comment is Created!');
+        }
 
-        return redirect()->route('news.show', ['id' => $input['news_id']])->with('success', 'New Comment is Created!');
+        return redirect()->route('news.show', ['id' => $input['news_id']])->with('error', 'Something went wrong!');
     }
 
     /**
@@ -122,22 +128,31 @@ class CommentController extends Controller
     }
 
     /**
-     * Update status and sed email
+     * Update status and send email
      * @param int $id
      * @param int $status
      */
     private function status($id, $status)
     {
-        $comment = Comment::findOrFail($id);
+        DB::beginTransaction();
+        try {
 
-        if ($status == 1) {
-            SendMail::send($comment->email, 'ApprovedComment',  [
-                'comment' => 'Your comment is approved',
+            $comment = Comment::findOrFail($id);
+            if ($status == 1) {
+                SendMail::send($comment->email, 'ApprovedComment',  [
+                    'comment' => 'Your comment is approved',
+                ]);
+            }
+            $comment->update([
+                'status' => $status
             ]);
+            DB::commit();
+            return true;
+        } catch (\Exception $exception) {
+            Log::error('Error while updating comment status ' . $exception);
+            DB::rollBack();
+            return false;
         }
-        return $comment->update([
-            'status' => $status
-        ]);
     }
 
     /**
@@ -147,12 +162,21 @@ class CommentController extends Controller
      */
     private function createComment($input)
     {
-        $comment = $this->commentObject;
-        $comment->comments()->create($input);
+        DB::beginTransaction();
+        try {
+            $comment = $this->commentObject;
+            $comment->comments()->create($input);
 
-        SendMail::send($comment->author->email, 'NewComment',  [
-            'name' => $comment->author->name,
-            'comment' => $input['comment'],
-        ]);
+            SendMail::send($comment->author->email, 'NewComment',  [
+                'name' => $comment->author->name,
+                'comment' => $input['comment'],
+            ]);
+            DB::commit();
+            return true;
+        } catch (\Exception $exception) {
+            Log::error('Error while creating comment ' . $exception);
+            DB::rollBack();
+            return false;
+        }
     }
 }

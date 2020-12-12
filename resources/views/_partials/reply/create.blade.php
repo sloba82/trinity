@@ -12,7 +12,7 @@
                             </div>
                             <div class="border-b-2 border-gray-100">
                                 <span class="text-gray-300 font-semibold">Comment: </span>
-                                <p style="width: 90%" class="text-gray-600 text-lg  md:text-left mb-5">
+                                <p class="text-gray-600 text-lg  md:text-left mb-5">
                                     {{$comment->comment}}
                                 </p>
                             </div>
@@ -40,7 +40,7 @@
                            <div class="ml-6">
                                 @foreach ($comment->replies as $reply)
                                     <span class="text-gray-300 font-semibold">Reply: </span>
-                                    <p style="width: 90%" class="text-gray-600 text-lg  md:text-left mb-5">
+                                    <p class="text-gray-600 text-lg  md:text-left mb-5">
                                         {{$reply->reply}}
                                     </p>
                                 @endforeach
