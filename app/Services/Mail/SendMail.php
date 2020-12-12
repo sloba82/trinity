@@ -8,13 +8,6 @@ use Illuminate\Support\Facades\Log;
 class SendMail
 {
 
-    // SendMail::send($input['email'], 'NewComment',  [
-    //     'test' => 'test',
-
-    // ]);
-
-
-
     public static function send(string $address, string $object,  array $data)
     {
         try {
