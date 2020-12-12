@@ -17,7 +17,7 @@ class CommentSeeder extends Seeder
     {
      $comments = [
            [
-            'comment' => 'News some comment 1',
+            'comment' => 'News some comment 1 Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
             'name' => 'one',
             'email' => 'one@test.com',
             'commentable_id' => 1,
@@ -28,7 +28,7 @@ class CommentSeeder extends Seeder
             'updated_at' => '2020-12-08',
            ],
            [
-            'comment' => 'Post some comment 2',
+            'comment' => 'Post some comment 2 Lorem Ipsum is simply dummy text of the printing and typesetting industry. ',
             'name' => 'two',
             'email' => 'two@test.com',
             'commentable_id' => 1,
@@ -39,7 +39,7 @@ class CommentSeeder extends Seeder
             'updated_at' => '2020-12-08',
            ],
            [
-            'comment' => 'Post some comment 2',
+            'comment' => 'Post some comment 2 Lorem Ipsum is simply dummy text of the printing and typesetting industry. ',
             'name' => 'two',
             'email' => 'two@test.com',
             'commentable_id' => 1,

@@ -33,29 +33,32 @@
                                             @foreach($comments as $comment)
                                             <tr class="{{ $loop->iteration % 2 ? 'bg-white' : 'bg-gray-50' }}">
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    <span class="text-gray-300 font-semibold">Comment: </span>
                                                     {{ $comment->comment }}
 
                                                     @foreach($comment->repliesAll as $reply)
-                                                        <div>
-                                                            {{$reply['reply']}}
 
-                                                            @if($reply['status'] == 1)
-                                                                <form class="inline-block" action="{{ route('reply.destroy', $reply['id']) }}" method="POST">
-                                                                    @method('DELETE')
-                                                                    @csrf
-                                                                    <button type="submit" class="ml-4 text-red-600 hover:text-red-900">Delete</button>
-                                                                </form>
-                                                            @else
-                                                                <form class="inline-block" action="{{ route('reply.enable', $reply['id']) }}" method="POST">
+                                                            <div class="max-w-screen-md ml-6 flex justify-between border-t-2 border-fuchsia-100">
+                                                                <div>
+                                                                    <span class="text-gray-300 font-semibold">Reply: </span>
+                                                                     {{$reply['reply']}}
+                                                                </div>
+                                                                <div>
+                                                                    @if($reply['status'] == 1)
+                                                                        <form class="inline-block" action="{{ route('reply.destroy', $reply['id']) }}" method="POST">
+                                                                            @method('DELETE')
+                                                                            @csrf
+                                                                            <button type="submit" class="ml-4 text-red-600 hover:text-red-900">Delete</button>
+                                                                        </form>
+                                                                    @else
+                                                                        <form class="inline-block" action="{{ route('reply.enable', $reply['id']) }}" method="POST">
 
-                                                                    @csrf
-                                                                    <button type="submit" class="ml-4 text-green-600 hover:text-green-900">Enable</button>
-                                                                </form>
-                                                            @endif
-
-
-
-                                                        </div>
+                                                                            @csrf
+                                                                            <button type="submit" class="ml-4 text-green-600 hover:text-green-900">Enable</button>
+                                                                        </form>
+                                                                    @endif
+                                                                </div>
+                                                            </div>
                                                     @endforeach
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
