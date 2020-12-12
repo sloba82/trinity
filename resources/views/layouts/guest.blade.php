@@ -21,5 +21,8 @@
         <div class="font-sans text-gray-900 antialiased">
             {{ $slot }}
         </div>
+
+
+        <footer class="mt-20 h-10 bg-gray-100"></footer>
     </body>
 </html>

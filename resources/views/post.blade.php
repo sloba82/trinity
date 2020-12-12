@@ -71,8 +71,8 @@
         </div>
     </div>
 
-    @include('_partials.commnet.create');
+    @include('_partials.commnet.create')
 
-    @include('_partials.reply.create');
+    @include('_partials.reply.create')
 
 </x-guest-layout>

@@ -7,7 +7,7 @@
             <input type="hidden" name="post_id" value="{{$post->id}}">
         @else
             <input type="hidden" name="news_id" value="{{$article->id}}">
-        @endif;
+        @endif
 
        <div class="flex flex-wrap -mx-3 mb-6">
           <h3 class="px-4 pt-3 pb-2 text-gray-800 text-lg">Add a new comment</h3>
